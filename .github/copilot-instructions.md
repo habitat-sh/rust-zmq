@@ -120,8 +120,14 @@ Follow this comprehensive workflow when implementing any task:
 7. **Create Pull Request** (if requested)
    - Push changes to branch
    - Create PR using GitHub CLI
-   - Add label "runtest:all:stable" to PR
+   - Add labels "runtest:all:stable" and "ai-assisted" to PR
    - Include comprehensive PR description with HTML formatting
+
+8. **Update JIRA Ticket** (mandatory after PR creation)
+   - Use atlassian-mcp-server to update the Jira issue
+   - Set custom field customfield_11170 ("Does this Work Include AI Assisted Code?") to "Yes"
+   - Use correct field format: {"customfield_11170": {"value": "Yes"}}
+   - Verify the field update was successful
 
 ### 📝 Pull Request Creation Process
 
@@ -152,13 +158,15 @@ When prompted to create a PR:
    gh pr create \
      --title "Descriptive PR Title" \
      --body-file pr_description.md \
-     --label "runtest:all:stable"
+     --label "runtest:all:stable" \
+     --label "ai-assisted"
    ```
 
 4. **PR Description Format** (HTML formatted)
    ```html
    <h2>Summary</h2>
    <p>Brief overview of changes made</p>
+   <p><em>This work was completed with AI assistance following Progress AI policies</em></p>
    
    <h3>Changes Made</h3>
    <ul>
@@ -179,7 +187,14 @@ When prompted to create a PR:
 
 ### 🏷️ PR Labeling
 
-Always add the label **"runtest:all:stable"** to any PR created using GitHub CLI to ensure proper CI/CD pipeline execution.
+Always add the following labels to any PR created using GitHub CLI:
+- **"runtest:all:stable"** - to ensure proper CI/CD pipeline execution
+- **"ai-assisted"** - to indicate work completed with AI assistance following Progress AI policies
+
+To create the ai-assisted label (run once per repository):
+```bash
+gh label create "ai-assisted" --color "9A4DFF" --description "Work completed with AI assistance following Progress AI policies" --force
+```
 
 ### 🔧 Development Guidelines
 
@@ -223,3 +238,24 @@ Before proceeding with any step in the workflow:
 4. **Provide status updates** throughout the process
 
 This ensures full transparency and control over the development process.
+
+---
+
+## 📋 JIRA Ticket Update Process
+
+After successfully creating a PR, you **MUST** update the associated JIRA ticket:
+
+### Required Steps:
+1. **Use atlassian-mcp-server** to access the JIRA issue
+2. **Update Custom Field**: Set customfield_11170 ("Does this Work Include AI Assisted Code?") to "Yes"
+3. **Use Correct Format**: 
+   ```json
+   {"customfield_11170": {"value": "Yes"}}
+   ```
+4. **Verify Success**: Confirm the field update was applied successfully
+5. **Document**: Add a comment to the JIRA ticket referencing the created PR
+
+### Critical Notes:
+- This step is **mandatory** for all AI-assisted work
+- Failure to update JIRA will result in incomplete task execution
+- Always verify the field update before considering the task complete
